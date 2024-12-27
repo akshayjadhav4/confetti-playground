@@ -1,0 +1,16 @@
+import { Dimensions } from "react-native";
+
+const { height: WINDOW_HEIGHT, width: WINDOW_WIDTH } = Dimensions.get("window");
+const CIRCULAR_CONTAINER_RADIUS = 150;
+const REACTANGLE_CONTAINER_CORNER_RADIUS = 18;
+const REACTANGLE_CONTAINER_SIZE = 80;
+const ROTATE_ANGLE = 12 * (Math.PI / 180);
+
+export {
+    WINDOW_HEIGHT,
+    WINDOW_WIDTH,
+    CIRCULAR_CONTAINER_RADIUS,
+    REACTANGLE_CONTAINER_CORNER_RADIUS,
+    REACTANGLE_CONTAINER_SIZE,
+    ROTATE_ANGLE,
+}
