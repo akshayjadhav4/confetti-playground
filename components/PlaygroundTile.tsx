@@ -30,6 +30,7 @@ const images = {
 
 const PlaygroundTile = (props: Props) => {
   const rotateAngle = useSharedValue(props.rotateAngle);
+  const tileImageRotateAngle = useSharedValue(props.rotateAngle);
   const top = useSharedValue(ORIGIN.y);
   const right = useSharedValue(ORIGIN.x);
   const left = useSharedValue(ORIGIN.x);
@@ -51,43 +52,37 @@ const PlaygroundTile = (props: Props) => {
     return {
       height: size.value,
       width: size.value,
+      top: top.value,
+      right: props.right ? right.value : null,
+      left: props.left ? left.value : null,
       transform: [
         { translateX: translationX.value },
         { translateY: translationY.value },
+        { rotate: `${tileImageRotateAngle.value}deg` },
       ],
     };
   });
 
   const pan = Gesture.Pan()
     .minDistance(1)
-    .onStart(() => {})
+    .onStart(() => {
+      tileImageRotateAngle.value = 0;
+    })
     .onUpdate((event) => {
-      // Convert degrees to radians
-      const angleInRadians = (rotateAngle.value * Math.PI) / 180;
-      /**
-       * consider rotation of the tile when updating its translation
-       * rotatedX = translationX * cos(angle) + translationY * sin(angle);
-       * rotatedY = -translationX * sin(angle) + translationY * cos(angle);
-       */
-      const rotatedX =
-        event.translationX * Math.cos(angleInRadians) +
-        event.translationY * Math.sin(angleInRadians);
-
-      const rotatedY =
-        -event.translationX * Math.sin(angleInRadians) +
-        event.translationY * Math.cos(angleInRadians);
-
-      translationX.value = rotatedX;
-      translationY.value = rotatedY;
+      translationX.value = event.translationX;
+      translationY.value = event.translationY;
+      // Increment rotation angle for continuous spinning while dragging
+      tileImageRotateAngle.value += 5;
     })
     .onEnd(() => {
       translationX.value = withSpring(0);
       translationY.value = withSpring(0);
+      tileImageRotateAngle.value = withTiming(rotateAngle.value);
     })
     .runOnJS(true);
 
   useEffect(() => {
-    rotateAngle.value = withRepeat(
+    const intialRotation = withRepeat(
       withTiming(props?.right ? 360 : -360, {
         duration: 1000,
         easing: Easing.linear,
@@ -95,6 +90,8 @@ const PlaygroundTile = (props: Props) => {
       -1,
       false
     );
+    rotateAngle.value = intialRotation;
+    tileImageRotateAngle.value = intialRotation;
 
     top.value = withTiming(props.top, { duration: 800 });
     if (props?.right) {
@@ -107,23 +104,25 @@ const PlaygroundTile = (props: Props) => {
 
     size.value = withTiming(props.size, { duration: 800 }, () => {
       cancelAnimation(rotateAngle);
+      tileImageRotateAngle.value = rotateAngle.value;
     });
   }, []);
 
   return (
-    <Animated.View
-      style={[
-        {
-          width: size,
-          height: size,
-          backgroundColor: props.color,
-          borderRadius: props.cornerRadius,
-          position: "absolute",
-          // opacity: 0.1,
-        },
-        tileAnimatedStyle,
-      ]}
-    >
+    <>
+      <Animated.View
+        style={[
+          {
+            width: size,
+            height: size,
+            backgroundColor: props.color,
+            borderRadius: props.cornerRadius,
+            position: "absolute",
+            opacity: 0.1,
+          },
+          tileAnimatedStyle,
+        ]}
+      />
       <GestureDetector gesture={pan}>
         <Animated.Image
           source={images[props.iconPath]}
@@ -137,7 +136,7 @@ const PlaygroundTile = (props: Props) => {
           ]}
         />
       </GestureDetector>
-    </Animated.View>
+    </>
   );
 };
 
