@@ -10,7 +10,7 @@ import {
   WINDOW_HEIGHT,
   WINDOW_WIDTH,
 } from "@/constants/dimensions";
-import Colors from "@/constants/colors";
+import Colors, { getRandomColor } from "@/constants/colors";
 import PlaygroundTile from "./PlaygroundTile";
 import {
   useDerivedValue,
@@ -21,6 +21,13 @@ import {
 
 const Playground = () => {
   const circularContainerRadius = useSharedValue(0);
+  const activeTheme = useSharedValue(Colors.PRIMARY);
+  const theme = useDerivedValue(() => activeTheme.value);
+  function changeTheme() {
+    activeTheme.value = withTiming(getRandomColor(activeTheme.value), {
+      duration: 500,
+    });
+  }
 
   useEffect(() => {
     circularContainerRadius.value = withDelay(
@@ -51,7 +58,7 @@ const Playground = () => {
               r={useDerivedValue(() => circularContainerRadius.value)}
               cx={WINDOW_WIDTH * 0.5}
               cy={WINDOW_HEIGHT * 0.7 * 0.5}
-              color={Colors.PRIMARY}
+              color={theme}
               opacity={0.1}
             />
             <BlurMask blur={8} style="normal" />
@@ -63,9 +70,10 @@ const Playground = () => {
           top={WINDOW_HEIGHT * 0.7 * 0.5 - CIRCULAR_CONTAINER_RADIUS * 0.2}
           size={REACTANGLE_CONTAINER_SIZE}
           cornerRadius={REACTANGLE_CONTAINER_CORNER_RADIUS}
-          color={Colors.PRIMARY}
+          color={theme}
           rotateAngle={ROTATE_ANGLE}
           iconPath="icon1"
+          changeTheme={changeTheme}
         />
 
         {/* right bottom */}
@@ -74,9 +82,10 @@ const Playground = () => {
           top={WINDOW_HEIGHT * 0.7 * 0.5 + CIRCULAR_CONTAINER_RADIUS / 3}
           size={REACTANGLE_CONTAINER_SIZE}
           cornerRadius={REACTANGLE_CONTAINER_CORNER_RADIUS}
-          color={Colors.PRIMARY}
+          color={theme}
           rotateAngle={ROTATE_ANGLE}
           iconPath="icon2"
+          changeTheme={changeTheme}
         />
 
         {/* right top */}
@@ -86,9 +95,10 @@ const Playground = () => {
           top={WINDOW_HEIGHT * 0.2}
           size={REACTANGLE_CONTAINER_SIZE}
           cornerRadius={REACTANGLE_CONTAINER_CORNER_RADIUS}
-          color={Colors.PRIMARY}
+          color={theme}
           rotateAngle={-ROTATE_ANGLE}
           iconPath="icon3"
+          changeTheme={changeTheme}
         />
       </View>
     </View>

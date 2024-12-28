@@ -8,4 +8,11 @@ const Colors = {
     TERTIARY: tertiary,
 };
 
+export function getRandomColor(currentColor:string) {
+    const colorValues = Object.values(Colors);
+    const availableColors = colorValues.filter((color) => color !== currentColor);
+    const randomIndex = Math.floor(Math.random() * availableColors.length);
+    return availableColors[randomIndex];
+}
+
 export default Colors;

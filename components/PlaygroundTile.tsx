@@ -10,6 +10,7 @@ import Animated, {
   withTiming,
   cancelAnimation,
   withSpring,
+  DerivedValue,
 } from "react-native-reanimated";
 type Props = {
   top: number;
@@ -17,9 +18,10 @@ type Props = {
   left?: number;
   size: number;
   cornerRadius: number;
-  color: string;
+  color: DerivedValue<string>;
   rotateAngle: number;
   iconPath: keyof typeof images;
+  changeTheme?: () => void;
 };
 
 const images = {
@@ -78,6 +80,9 @@ const PlaygroundTile = (props: Props) => {
       translationX.value = withSpring(0);
       translationY.value = withSpring(0);
       tileImageRotateAngle.value = withTiming(rotateAngle.value);
+      if (props?.changeTheme) {
+        props?.changeTheme();
+      }
     })
     .runOnJS(true);
 
