@@ -25,9 +25,9 @@ type Props = {
 };
 
 const images = {
-  icon1: require("@/assets/images/icon.png"),
-  icon2: require("@/assets/images/icon.png"),
-  icon3: require("@/assets/images/icon.png"),
+  icon1: require("@/assets/images/xcode.png"),
+  icon2: require("@/assets/images/android-studio.png"),
+  icon3: require("@/assets/images/code.png"),
 };
 
 const PlaygroundTile = (props: Props) => {
@@ -39,6 +39,7 @@ const PlaygroundTile = (props: Props) => {
   const size = useSharedValue(0);
   const translationX = useSharedValue(0);
   const translationY = useSharedValue(0);
+  const imageSize = useSharedValue(0);
 
   const tileAnimatedStyle = useAnimatedStyle(() => {
     return {
@@ -52,11 +53,11 @@ const PlaygroundTile = (props: Props) => {
 
   const tileImage = useAnimatedStyle(() => {
     return {
-      height: size.value,
-      width: size.value,
-      top: top.value,
-      right: props.right ? right.value : null,
-      left: props.left ? left.value : null,
+      height: imageSize.value,
+      width: imageSize.value,
+      top: top.value - 6,
+      right: props.right ? right.value - 6 : null,
+      left: props.left ? left.value - 6 : null,
       transform: [
         { translateX: translationX.value },
         { translateY: translationY.value },
@@ -79,7 +80,9 @@ const PlaygroundTile = (props: Props) => {
     .onEnd(() => {
       translationX.value = withSpring(0);
       translationY.value = withSpring(0);
-      tileImageRotateAngle.value = withTiming(rotateAngle.value);
+      tileImageRotateAngle.value = withTiming(rotateAngle.value, {
+        duration: 500,
+      });
       if (props?.changeTheme) {
         props?.changeTheme();
       }
@@ -106,10 +109,29 @@ const PlaygroundTile = (props: Props) => {
     if (props?.left) {
       left.value = withTiming(props.left, { duration: 800 });
     }
-
+    imageSize.value = withTiming(props.size + 12, { duration: 800 });
     size.value = withTiming(props.size, { duration: 800 }, () => {
+      // stop continues rotation
       cancelAnimation(rotateAngle);
-      tileImageRotateAngle.value = rotateAngle.value;
+      // convert rotation degree between 0 to 360 e.g.-725 % 360 = -5°
+      const currentRotation = rotateAngle.value % 360;
+      // same as above but for final expected angle
+      let normalizedTarget = props?.rotateAngle % 360;
+      // convert negative angle to 0 to 360 positive
+      if (normalizedTarget < 0) normalizedTarget += 360;
+      // calculate difference between current and target angle
+      let diff = normalizedTarget - currentRotation;
+      // get shortest rotation path
+      if (Math.abs(diff) > 180) {
+        diff = diff > 0 ? diff - 360 : diff + 360;
+      }
+      // animate to final position
+      const rotation = withSpring(currentRotation + diff, {
+        damping: 15,
+        stiffness: 90,
+      });
+      rotateAngle.value = rotation;
+      tileImageRotateAngle.value = rotation;
     });
   }, []);
 

@@ -83,7 +83,7 @@ const Playground = () => {
           size={REACTANGLE_CONTAINER_SIZE}
           cornerRadius={REACTANGLE_CONTAINER_CORNER_RADIUS}
           color={theme}
-          rotateAngle={ROTATE_ANGLE}
+          rotateAngle={-ROTATE_ANGLE}
           iconPath="icon2"
           changeTheme={changeTheme}
         />
@@ -96,7 +96,7 @@ const Playground = () => {
           size={REACTANGLE_CONTAINER_SIZE}
           cornerRadius={REACTANGLE_CONTAINER_CORNER_RADIUS}
           color={theme}
-          rotateAngle={-ROTATE_ANGLE}
+          rotateAngle={ROTATE_ANGLE}
           iconPath="icon3"
           changeTheme={changeTheme}
         />
