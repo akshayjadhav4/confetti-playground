@@ -1,9 +1,10 @@
 import { StyleSheet, Text, View } from "react-native";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import { BlurMask, Canvas, Circle, Group } from "@shopify/react-native-skia";
 import {
   CIRCULAR_CONTAINER_RADIUS,
+  ORIGIN,
   REACTANGLE_CONTAINER_CORNER_RADIUS,
   REACTANGLE_CONTAINER_SIZE,
   ROTATE_ANGLE,
@@ -18,15 +19,25 @@ import {
   withDelay,
   withTiming,
 } from "react-native-reanimated";
+import Confetti from "./Confetti";
 
 const Playground = () => {
   const circularContainerRadius = useSharedValue(0);
   const activeTheme = useSharedValue(Colors.PRIMARY);
   const theme = useDerivedValue(() => activeTheme.value);
+  const [popConfetti, setPopConfetti] = useState(false);
+  function triggerConfetti() {
+    "worklet";
+    setPopConfetti(true);
+    setTimeout(() => {
+      setPopConfetti(false);
+    }, 1500);
+  }
   function changeTheme() {
     activeTheme.value = withTiming(getRandomColor(activeTheme.value), {
       duration: 500,
     });
+    triggerConfetti();
   }
 
   useEffect(() => {
@@ -63,6 +74,10 @@ const Playground = () => {
             />
             <BlurMask blur={8} style="normal" />
           </Group>
+          <Confetti
+            center={{ x: ORIGIN.x, y: ORIGIN.y }}
+            isExploding={popConfetti}
+          />
         </Canvas>
         {/* Left center */}
         <PlaygroundTile

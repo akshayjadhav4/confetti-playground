@@ -7,7 +7,16 @@ const Colors = {
     SECONDARY: secondary,
     TERTIARY: tertiary,
 };
-
+export const CONFETTI_COLORS = [
+    "#FF6B6B",
+    "#4ECDC4",
+    "#45B7D1",
+    "#96CEB4",
+    "#FFEEAD",
+    "#D4A5A5",
+    "#9B59B6",
+    "#3498DB",
+  ];
 export function getRandomColor(currentColor:string) {
     const colorValues = Object.values(Colors);
     const availableColors = colorValues.filter((color) => color !== currentColor);
