@@ -11,7 +11,9 @@ import Animated, {
   cancelAnimation,
   withSpring,
   DerivedValue,
+  runOnJS,
 } from "react-native-reanimated";
+import { TILE } from "@/constants/tile";
 type Props = {
   top: number;
   right?: number;
@@ -21,7 +23,8 @@ type Props = {
   color: DerivedValue<string>;
   rotateAngle: number;
   iconPath: keyof typeof images;
-  changeTheme?: () => void;
+  onDragFinish?: (tile: TILE) => void;
+  tile: TILE;
 };
 
 const images = {
@@ -81,12 +84,17 @@ const PlaygroundTile = (props: Props) => {
     .onEnd(() => {
       translationX.value = withSpring(0);
       translationY.value = withSpring(0);
-      tileImageRotateAngle.value = withTiming(rotateAngle.value, {
-        duration: 500,
-      });
-      if (props?.changeTheme) {
-        props?.changeTheme();
-      }
+      tileImageRotateAngle.value = withTiming(
+        rotateAngle.value,
+        {
+          duration: 500,
+        },
+        () => {
+          if (props?.onDragFinish) {
+            runOnJS(props?.onDragFinish)(props.tile);
+          }
+        }
+      );
     })
     .runOnJS(true);
 

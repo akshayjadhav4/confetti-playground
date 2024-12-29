@@ -14,30 +14,48 @@ import {
 import Colors, { getRandomColor } from "@/constants/colors";
 import PlaygroundTile from "./PlaygroundTile";
 import {
+  runOnJS,
   useDerivedValue,
   useSharedValue,
   withDelay,
   withTiming,
 } from "react-native-reanimated";
 import Confetti from "./Confetti";
+import { TILE } from "@/constants/tile";
 
 const Playground = () => {
   const circularContainerRadius = useSharedValue(0);
   const activeTheme = useSharedValue(Colors.PRIMARY);
   const theme = useDerivedValue(() => activeTheme.value);
   const [popConfetti, setPopConfetti] = useState(false);
-  function triggerConfetti() {
-    "worklet";
+  const [confettiOrigin, setConfettiOrigin] = useState({
+    x: ORIGIN.x,
+    y: ORIGIN.y,
+  });
+  function triggerConfetti(tile: TILE) {
+    switch (tile) {
+      case TILE.Xcode:
+        setConfettiOrigin({ x: ORIGIN.x - 80, y: ORIGIN.y });
+        break;
+      case TILE.Code:
+        setConfettiOrigin({ x: ORIGIN.x + 80, y: ORIGIN.y - 80 });
+        break;
+      case TILE.AndroidStudio:
+        setConfettiOrigin({ x: ORIGIN.x + 80 / 2, y: ORIGIN.y + 80 });
+        break;
+      default:
+        break;
+    }
     setPopConfetti(true);
     setTimeout(() => {
       setPopConfetti(false);
     }, 1500);
   }
-  function changeTheme() {
+  function dragFinish(tile: TILE) {
     activeTheme.value = withTiming(getRandomColor(activeTheme.value), {
       duration: 500,
     });
-    triggerConfetti();
+    runOnJS(triggerConfetti)(tile);
   }
 
   useEffect(() => {
@@ -74,10 +92,7 @@ const Playground = () => {
             />
             <BlurMask blur={8} style="normal" />
           </Group>
-          <Confetti
-            center={{ x: ORIGIN.x, y: ORIGIN.y }}
-            isExploding={popConfetti}
-          />
+          <Confetti center={confettiOrigin} isExploding={popConfetti} />
         </Canvas>
         {/* Left center */}
         <PlaygroundTile
@@ -88,7 +103,8 @@ const Playground = () => {
           color={theme}
           rotateAngle={ROTATE_ANGLE}
           iconPath="icon1"
-          changeTheme={changeTheme}
+          onDragFinish={dragFinish}
+          tile={TILE.Xcode}
         />
 
         {/* right bottom */}
@@ -100,7 +116,8 @@ const Playground = () => {
           color={theme}
           rotateAngle={-ROTATE_ANGLE}
           iconPath="icon2"
-          changeTheme={changeTheme}
+          onDragFinish={dragFinish}
+          tile={TILE.AndroidStudio}
         />
 
         {/* right top */}
@@ -113,7 +130,8 @@ const Playground = () => {
           color={theme}
           rotateAngle={ROTATE_ANGLE}
           iconPath="icon3"
-          changeTheme={changeTheme}
+          onDragFinish={dragFinish}
+          tile={TILE.Code}
         />
       </View>
     </View>
