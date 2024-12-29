@@ -1,7 +1,7 @@
 import { ORIGIN } from "@/constants/dimensions";
 import React, { useEffect } from "react";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
-
+import * as Haptics from "expo-haptics";
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -72,6 +72,7 @@ const PlaygroundTile = (props: Props) => {
       tileImageRotateAngle.value = 0;
     })
     .onUpdate((event) => {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Rigid);
       translationX.value = event.translationX;
       translationY.value = event.translationY;
       // Increment rotation angle for continuous spinning while dragging
