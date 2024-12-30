@@ -81,6 +81,11 @@ const PlaygroundTile = (props: Props) => {
       // Increment rotation angle for continuous spinning while dragging
       tileImageRotateAngle.value += 20;
     })
+    .onTouchesUp(() => {
+      if (props?.onDragFinish) {
+        runOnJS(props?.onDragFinish)(props.tile);
+      }
+    })
     .onEnd(() => {
       translationX.value = withSpring(0, {
         damping: 15,
@@ -99,17 +104,9 @@ const PlaygroundTile = (props: Props) => {
         restDisplacementThreshold: 0.01,
         restSpeedThreshold: 0.01,
       });
-      tileImageRotateAngle.value = withTiming(
-        rotateAngle.value,
-        {
-          duration: 400,
-        },
-        () => {
-          if (props?.onDragFinish) {
-            runOnJS(props?.onDragFinish)(props.tile);
-          }
-        }
-      );
+      tileImageRotateAngle.value = withTiming(rotateAngle.value, {
+        duration: 300,
+      });
     })
     .runOnJS(true);
 
