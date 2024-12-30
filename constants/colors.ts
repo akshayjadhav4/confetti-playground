@@ -8,14 +8,14 @@ const Colors = {
     TERTIARY: tertiary,
 };
 export const CONFETTI_COLORS = [
-    "#FF6B6B",
-    "#4ECDC4",
-    "#45B7D1",
-    "#96CEB4",
-    "#FFEEAD",
-    "#D4A5A5",
-    "#9B59B6",
-    "#3498DB",
+    "#CC6677",
+    "#85D9C9",
+    "#68BFD1", 
+    "#A8D4B7",
+    "#FFE9C2",
+    "#C8A9A9",
+    "#B58ACF",
+    "#6E9EC7",
   ];
 export function getRandomColor(currentColor:string) {
     const colorValues = Object.values(Colors);
