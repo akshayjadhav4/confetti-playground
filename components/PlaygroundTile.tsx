@@ -79,7 +79,7 @@ const PlaygroundTile = (props: Props) => {
       translationX.value = event.translationX;
       translationY.value = event.translationY;
       // Increment rotation angle for continuous spinning while dragging
-      tileImageRotateAngle.value += 5;
+      tileImageRotateAngle.value += 15;
     })
     .onEnd(() => {
       translationX.value = withSpring(0);
