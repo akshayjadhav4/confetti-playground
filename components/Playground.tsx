@@ -47,9 +47,6 @@ const Playground = () => {
         break;
     }
     setPopConfetti(true);
-    setTimeout(() => {
-      setPopConfetti(false);
-    }, 1500);
   }
   function dragFinish(tile: TILE) {
     activeTheme.value = withTiming(getRandomColor(activeTheme.value), {
@@ -92,7 +89,11 @@ const Playground = () => {
             />
             <BlurMask blur={8} style="normal" />
           </Group>
-          <Confetti center={confettiOrigin} isExploding={popConfetti} />
+          <Confetti
+            center={confettiOrigin}
+            isExploding={popConfetti}
+            setPopConfetti={setPopConfetti}
+          />
         </Canvas>
         {/* Left center */}
         <PlaygroundTile

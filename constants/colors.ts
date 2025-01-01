@@ -8,15 +8,15 @@ const Colors = {
     TERTIARY: tertiary,
 };
 export const CONFETTI_COLORS = [
-    "#CC6677",
-    "#85D9C9",
-    "#68BFD1", 
-    "#A8D4B7",
-    "#FFE9C2",
-    "#C8A9A9",
-    "#B58ACF",
-    "#6E9EC7",
-  ];
+    "#FF6B6B",  // Bright Red
+    "#4ECDC4",  // Turquoise
+    "#FFD93D",  // Bright Yellow
+    "#6A5ACD",  // Slate Blue
+    "#20B2AA",  // Light Sea Green
+    "#FF4500",  // Orange Red
+    "#7B68EE",  // Medium Slate Blue
+    "#00CED1",  // Dark Turquoise
+];
 export function getRandomColor(currentColor:string) {
     const colorValues = Object.values(Colors);
     const availableColors = colorValues.filter((color) => color !== currentColor);

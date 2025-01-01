@@ -14,6 +14,7 @@ import {
 } from "@shopify/react-native-skia";
 import React, { useEffect } from "react";
 import {
+  runOnJS,
   useDerivedValue,
   useSharedValue,
   withDelay,
@@ -24,9 +25,11 @@ import {
 const Confetti = ({
   isExploding = true,
   center,
+  setPopConfetti,
 }: {
   isExploding: boolean;
   center: { x: number; y: number };
+  setPopConfetti: (value: boolean) => void;
 }) => {
   if (!isExploding) {
     return null;
@@ -38,8 +41,9 @@ const Confetti = ({
         x={center.x}
         y={center.y}
         color={CONFETTI_COLORS[index % CONFETTI_COLORS.length]}
-        delay={Math.random() * 200}
+        delay={Math.random() * 50}
         index={index}
+        setPopConfetti={setPopConfetti}
       />
     );
   });
@@ -51,12 +55,14 @@ const ConfettiFidget = ({
   color,
   delay,
   index,
+  setPopConfetti,
 }: {
   x: number;
   y: number;
   color: string;
   delay: number;
   index: number;
+  setPopConfetti: (value: boolean) => void;
 }) => {
   const translationX = useSharedValue(x);
   const translationY = useSharedValue(y);
@@ -89,53 +95,76 @@ const ConfettiFidget = ({
   useEffect(() => {
     opacity.value = 1;
 
-    const randomAngle = Math.random() * Math.PI * 2;
-    const distance = Math.random() * WINDOW_WIDTH * 1.5 + WINDOW_WIDTH * 0.5;
-    const deltaX = Math.cos(randomAngle) * distance;
-    const deltaY = Math.sin(randomAngle) * distance - WINDOW_HEIGHT * 0.2;
-    // duration for animation
-    const duration = 1000 + Math.random() * 500;
+    const quadrant = Math.floor(index / 25); // Divides 100 pieces into 4 quadrants (25 pieces each)
+    const quadrantAngle = (Math.PI / 2) * quadrant; // Converts quadrant to base angle
+    const randomAngle =
+      quadrantAngle + (Math.PI / 2) * (Math.random() * 0.8 + 0.1);
+
+    const initialVelocity =
+      Math.random() * WINDOW_WIDTH * 0.4 + WINDOW_WIDTH * 0.2;
+
+    const deltaX = Math.cos(randomAngle) * initialVelocity;
+    const deltaY = Math.sin(randomAngle) * initialVelocity;
+
+    const burstDuration = 500 + Math.random() * 300;
+    const fallDuration = 800 + Math.random() * 400;
 
     scale.value = withDelay(
       delay,
       withSpring(1, {
-        damping: 5,
-        stiffness: 200,
-        mass: 0.5,
+        damping: 3,
+        stiffness: 300,
+        mass: 0.3,
       })
     );
 
     rotation.value = withDelay(
       delay,
-      withTiming((Math.random() - 0.5) * Math.PI * 8, {
-        duration: duration * 0.8,
+      withTiming((Math.random() - 0.5) * Math.PI * 16, {
+        duration: burstDuration,
       })
     );
 
     translationX.value = withDelay(
       delay,
       withTiming(x + deltaX, {
-        duration: duration * 0.8,
+        duration: burstDuration,
       })
     );
 
     translationY.value = withDelay(
       delay,
-      withTiming(y + deltaY + WINDOW_HEIGHT * 0.5, {
-        duration: duration,
-      })
+      withTiming(
+        y + deltaY,
+        {
+          duration: burstDuration,
+        },
+        () => {
+          translationY.value = withTiming(y + deltaY + WINDOW_HEIGHT * 0.5, {
+            duration: fallDuration,
+          });
+        }
+      )
     );
 
     opacity.value = withDelay(
-      delay + duration * 0.6,
-      withTiming(0, {
-        duration: duration * 0.2,
-      })
+      delay + burstDuration * 0.8,
+      withTiming(
+        0,
+        {
+          duration: fallDuration * 0.4,
+        },
+        () => {
+          if (index === 99) {
+            runOnJS(setPopConfetti)(false);
+          }
+        }
+      )
     );
 
-    rotateX.value = withTiming(Math.random() * 360, { duration: 4000 });
-    rotateY.value = withTiming(Math.random() * 360, { duration: 4000 });
-    rotateZ.value = withTiming(Math.random() * 360, { duration: 4000 });
+    rotateX.value = withTiming(Math.random() * 720, { duration: 1500 });
+    rotateY.value = withTiming(Math.random() * 720, { duration: 1500 });
+    rotateZ.value = withTiming(Math.random() * 720, { duration: 1500 });
   }, []);
 
   return (
@@ -143,7 +172,7 @@ const ConfettiFidget = ({
       <RoundedRect
         x={translationX}
         y={translationY}
-        height={CONFETTI_FIDGET_SIZE * 2}
+        height={CONFETTI_FIDGET_SIZE * 1.5}
         width={CONFETTI_FIDGET_SIZE}
         r={2}
         color={color}
