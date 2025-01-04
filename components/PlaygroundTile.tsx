@@ -12,6 +12,7 @@ import Animated, {
   withSpring,
   DerivedValue,
   runOnJS,
+  ReduceMotion,
 } from "react-native-reanimated";
 import { TILE } from "@/constants/tile";
 type Props = {
@@ -79,7 +80,7 @@ const PlaygroundTile = (props: Props) => {
       translationX.value = event.translationX;
       translationY.value = event.translationY;
       // Increment rotation angle for continuous spinning while dragging
-      tileImageRotateAngle.value += 20;
+      tileImageRotateAngle.value += 25;
     })
     .onTouchesUp(() => {
       if (props?.onDragFinish) {
@@ -89,23 +90,17 @@ const PlaygroundTile = (props: Props) => {
     .onEnd(() => {
       translationX.value = withSpring(0, {
         damping: 15,
-        stiffness: 150,
-        mass: 1,
+        stiffness: 180,
         overshootClamping: false,
-        restDisplacementThreshold: 0.01,
-        restSpeedThreshold: 0.01,
       });
 
       translationY.value = withSpring(0, {
         damping: 15,
-        stiffness: 150,
-        mass: 1,
+        stiffness: 180,
         overshootClamping: false,
-        restDisplacementThreshold: 0.01,
-        restSpeedThreshold: 0.01,
       });
       tileImageRotateAngle.value = withTiming(rotateAngle.value, {
-        duration: 300,
+        duration: 100,
       });
     })
     .runOnJS(true);
