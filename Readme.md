@@ -58,7 +58,7 @@ Adjust tile behavior in `components/PlaygroundTile.tsx`:
 
 ## 🎥 Demo
 
-![Confetti Demo](./assets/demo.gif)
+<img src="./assets/demo.gif" alt="Confetti Demo" width="300" height="650"/>
 
 ## 🙌 Credits
 
