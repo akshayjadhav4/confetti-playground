@@ -62,4 +62,5 @@ Adjust tile behavior in `components/PlaygroundTile.tsx`:
 
 ## 🙌 Credits
 
-Inspired by [Toni Lijic's animation](https://x.com/tonilijic/status/1790328090620518602) on X (formerly Twitter).
+- Inspired by [Toni Lijic's animation](https://x.com/tonilijic/status/1790328090620518602) on X (formerly Twitter).
+- [Confetti Rotation Reference](https://youtu.be/qOhYFDOEOmo?si=bh0kmUXNNFOKloBt)
